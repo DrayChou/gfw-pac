@@ -10942,7 +10942,9 @@ var cnips = [
 
 var hasOwnProperty = Object.hasOwnProperty;
 
-var ipRegExp = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/);
+var ipRegExp = new RegExp(
+  /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+);
 
 function isIPv6(ip) {
     // Split the IP address into groups of hexadecimal digits
@@ -10979,34 +10981,39 @@ function isIPv6(ip) {
 }
 
 function convertAddress(ipchars) {
-    var bytes = ipchars.split('.');
-    var result = ((bytes[0] & 0xff) << 24) |
-                 ((bytes[1] & 0xff) << 16) |
-                 ((bytes[2] & 0xff) <<  8) |
-                  (bytes[3] & 0xff);
-    return result;
+  var bytes = ipchars.split(".");
+  var result =
+    ((bytes[0] & 0xff) << 24) |
+    ((bytes[1] & 0xff) << 16) |
+    ((bytes[2] & 0xff) << 8) |
+    (bytes[3] & 0xff);
+  return result;
 }
 
 function match(ip) {
-    var left = 0, right = cnips.length;
-    do {
-        var mid = Math.floor((left + right) / 2),
-            ipf = (ip & cnips[mid][1]) >>> 0,
-            m   = (cnips[mid][0] & cnips[mid][1]) >>> 0;
-        if (ipf == m) {
-            return true;
-        } else if (ipf > m) {
-            left  = mid + 1;
-        } else {
-            right = mid;
-        }
-    } while (left + 1 <= right)
-    return false;
+  var left = 0,
+    right = cnips.length;
+  do {
+    var mid = Math.floor((left + right) / 2),
+      ipf = (ip & cnips[mid][1]) >>> 0,
+      m = (cnips[mid][0] & cnips[mid][1]) >>> 0;
+    if (ipf == m) {
+      return true;
+    } else if (ipf > m) {
+      left = mid + 1;
+    } else {
+      right = mid;
+    }
+  } while (left + 1 <= right);
+  return false;
 }
 
 function isInDirectDomain(host) {
     if (hasOwnProperty.call(directDomains, host)) {
         return true;
+      } else {
+        return false;
+      }
     }
     for (var domain in directDomains) {
         if (host.endsWith('.' + domain)) {
@@ -11029,12 +11036,12 @@ function isInProxyDomain(host) {
 }
 
 function isLocalTestDomain(domain) {
-    // Chrome uses .test as testing gTLD.
-    var tld = domain.substring(domain.lastIndexOf('.'));
-    if (tld === domain) {
-        return false;
-    }
-    return Object.hasOwnProperty.call(localTlds, tld);
+  // Chrome uses .test as testing gTLD.
+  var tld = domain.substring(domain.lastIndexOf("."));
+  if (tld === domain) {
+    return false;
+  }
+  return Object.hasOwnProperty.call(localTlds, tld);
 }
 
 /* https://github.com/frenchbread/private-ip */
@@ -11087,7 +11094,20 @@ function FindProxyForURL(url, host) {
         alert(`${host} MATCHES CNIP`)
         return direct;
     }
+    strIp = dnsResolve(host);
+  } else {
+    strIp = host;
+  }
 
     alert(`${host} NO RULES WARE MATCHED, USING PROXY`)
     return proxy;
+  }
+
+  intIp = convertAddress(strIp);
+
+  if (match(intIp)) {
+    return direct;
+  }
+
+  return proxy;
 }
