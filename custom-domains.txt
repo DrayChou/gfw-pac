@@ -48,3 +48,5 @@ microsoft.com
 live.com
 battle.net
 blizzard.com
+microsoftstore.com.cn
+microsoft.cn
