@@ -35,7 +35,11 @@
 举例：
 
 ```
+<!-- 使用本地配置 -->
 python3 gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; PROXY localhost:1080; PROXY localhost:1081; PROXY localhost:1082; PROXY localhost:11223; PROXY localhost:10809; SOCKS5 localhost:10808; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 10.10.8.17:7893; SOCKS5 172.30.1.10:7893; SOCKS5 172.30.1.9:7893; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT" -i gfwlist.txt --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt --ip-file=delegated-apnic-latest.txt
+
+<!-- 使用在线配置 -->
+python3 gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; PROXY localhost:1080; PROXY localhost:1081; PROXY localhost:1082; PROXY localhost:11223; PROXY localhost:10809; SOCKS5 localhost:10808; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 10.10.8.17:7893; SOCKS5 172.30.1.10:7893; SOCKS5 172.30.1.9:7893; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt
 ```
 
 ## 疑难解答
