@@ -17274,7 +17274,14 @@ function isProxyAlive(proxy) {
     return true;
   }
 
-  var ws = new WebSocket("ws://" + proxy);
+  // 先从 proxy 里解出来 IP 和端口号, 示例：SOCKS5 localhost:1080 或者 PROXY localhost:1080;
+  var t0 = proxy.split(" ");
+  if (t0.length < 2) {
+    return false;
+  }
+  var host = t0[1];
+
+  var ws = new WebSocket("ws://" + host);
   ws.onopen = function () {
     ws.close();
   };
