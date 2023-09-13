@@ -1,9 +1,5 @@
 var proxy = "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT";
 
-var proxyList = proxy.split(";").map(function (proxy) {
-  return proxy.trim();
-});
-
 var direct = "DIRECT;";
 
 var cnips = [
@@ -17265,32 +17261,6 @@ function isPrivateIp(ip) {
   );
 }
 
-function isProxyAlive(proxy) {
-  // 如果最近10秒这个 proxy 测试过，那么就不再测试
-  if (
-    proxy in isProxyAlive.cache &&
-    Date.now() - isProxyAlive.cache[proxy] < 10000
-  ) {
-    return true;
-  }
-
-  // 先从 proxy 里解出来 IP 和端口号, 示例：SOCKS5 localhost:1080 或者 PROXY localhost:1080;
-  var t0 = proxy.split(" ");
-  if (t0.length < 2) {
-    return false;
-  }
-  var host = t0[1];
-
-  var ws = new WebSocket("ws://" + host);
-  ws.onopen = function () {
-    ws.close();
-  };
-  ws.onerror = function () {
-    return false;
-  };
-  return true;
-}
-
 function FindProxyForURL(url, host) {
   if (
     isPlainHostName(host) ||
@@ -17299,16 +17269,6 @@ function FindProxyForURL(url, host) {
     host === "localhost"
   ) {
     return direct;
-  }
-
-  var randomIndex = Math.floor(Math.random() * proxyList.length);
-  var proxy = proxyList[randomIndex];
-  for (var i = 0; i < proxyList.length; i++) {
-    var p = proxyList[i];
-    if (isProxyAlive(p)) {
-      proxy = p;
-      break;
-    }
   }
 
   if (!ipRegExp.test(host)) {
