@@ -1,6 +1,10 @@
 var proxy = "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT";
 
-var direct = 'DIRECT;';
+var proxyList = proxy.split(";").map(function (proxy) {
+  return proxy.trim();
+});
+
+var direct = "DIRECT;";
 
 var cnips = [
   [
@@ -17179,110 +17183,149 @@ var localTlds = {
 
 var hasOwnProperty = Object.hasOwnProperty;
 
-var ipRegExp = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/);
+var ipRegExp = new RegExp(
+  /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+);
 
 function convertAddress(ipchars) {
-    var bytes = ipchars.split('.');
-    var result = ((bytes[0] & 0xff) << 24) |
-                 ((bytes[1] & 0xff) << 16) |
-                 ((bytes[2] & 0xff) <<  8) |
-                  (bytes[3] & 0xff);
-    return result;
+  var bytes = ipchars.split(".");
+  var result =
+    ((bytes[0] & 0xff) << 24) |
+    ((bytes[1] & 0xff) << 16) |
+    ((bytes[2] & 0xff) << 8) |
+    (bytes[3] & 0xff);
+  return result;
 }
 
 function match(ip) {
-    var left = 0, right = cnips.length;
-    do {
-        var mid = Math.floor((left + right) / 2),
-            ipf = (ip & cnips[mid][1]) >>> 0,
-            m   = (cnips[mid][0] & cnips[mid][1]) >>> 0;
-        if (ipf == m) {
-            return true;
-        } else if (ipf > m) {
-            left  = mid + 1;
-        } else {
-            right = mid;
-        }
-    } while (left + 1 <= right)
-    return false;
+  var left = 0,
+    right = cnips.length;
+  do {
+    var mid = Math.floor((left + right) / 2),
+      ipf = (ip & cnips[mid][1]) >>> 0,
+      m = (cnips[mid][0] & cnips[mid][1]) >>> 0;
+    if (ipf == m) {
+      return true;
+    } else if (ipf > m) {
+      left = mid + 1;
+    } else {
+      right = mid;
+    }
+  } while (left + 1 <= right);
+  return false;
 }
 
 function testDomain(target, domains, cnRootIncluded) {
-    var idxA = target.lastIndexOf('.');
-    var idxB = target.lastIndexOf('.', idxA - 1);
-    var hasOwnProperty = Object.hasOwnProperty;
-    var suffix = cnRootIncluded ? target.substring(idxA + 1) : '';
-    if (suffix === 'cn') {
+  var idxA = target.lastIndexOf(".");
+  var idxB = target.lastIndexOf(".", idxA - 1);
+  var hasOwnProperty = Object.hasOwnProperty;
+  var suffix = cnRootIncluded ? target.substring(idxA + 1) : "";
+  if (suffix === "cn") {
+    return true;
+  }
+  while (true) {
+    if (idxB === -1) {
+      if (hasOwnProperty.call(domains, target)) {
         return true;
+      } else {
+        return false;
+      }
     }
-    while (true) {
-        if (idxB === -1) {
-            if (hasOwnProperty.call(domains, target)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-        suffix = target.substring(idxB + 1);
-        if (hasOwnProperty.call(domains, suffix)) {
-            return true;
-        }
-        idxB = target.lastIndexOf('.', idxB - 1);
+    suffix = target.substring(idxB + 1);
+    if (hasOwnProperty.call(domains, suffix)) {
+      return true;
     }
+    idxB = target.lastIndexOf(".", idxB - 1);
+  }
 }
 
 function isLocalTestDomain(domain) {
-    // Chrome uses .test as testing gTLD.
-    var tld = domain.substring(domain.lastIndexOf('.'));
-    if (tld === domain) {
-        return false;
-    }
-    return Object.hasOwnProperty.call(localTlds, tld);
+  // Chrome uses .test as testing gTLD.
+  var tld = domain.substring(domain.lastIndexOf("."));
+  if (tld === domain) {
+    return false;
+  }
+  return Object.hasOwnProperty.call(localTlds, tld);
 }
 
 /* https://github.com/frenchbread/private-ip */
 function isPrivateIp(ip) {
-  return /^(::f{4}:)?10\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
-  /^(::f{4}:)?192\.168\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
-  /^(::f{4}:)?172\.(1[6-9]|2\d|30|31)\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
-  /^(::f{4}:)?127\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
-  /^(::f{4}:)?169\.254\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
-  /^f[cd][0-9a-f]{2}:/i.test(ip) ||
-  /^fe80:/i.test(ip) ||
-  /^::1$/.test(ip) ||
-  /^::$/.test(ip);
+  return (
+    /^(::f{4}:)?10\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
+    /^(::f{4}:)?192\.168\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
+    /^(::f{4}:)?172\.(1[6-9]|2\d|30|31)\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(
+      ip
+    ) ||
+    /^(::f{4}:)?127\.([0-9]{1,3})\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
+    /^(::f{4}:)?169\.254\.([0-9]{1,3})\.([0-9]{1,3})$/i.test(ip) ||
+    /^f[cd][0-9a-f]{2}:/i.test(ip) ||
+    /^fe80:/i.test(ip) ||
+    /^::1$/.test(ip) ||
+    /^::$/.test(ip)
+  );
+}
+
+function isProxyAlive(proxy) {
+  // 如果最近10秒这个 proxy 测试过，那么就不再测试
+  if (
+    proxy in isProxyAlive.cache &&
+    Date.now() - isProxyAlive.cache[proxy] < 10000
+  ) {
+    return true;
+  }
+
+  var ws = new WebSocket("ws://" + proxy);
+  ws.onopen = function () {
+    ws.close();
+  };
+  ws.onerror = function () {
+    return false;
+  };
+  return true;
 }
 
 function FindProxyForURL(url, host) {
-    if (isPlainHostName(host)
-     || isPrivateIp(host)
-     || isLocalTestDomain(host)
-     || host === 'localhost') {
-        return direct;
+  if (
+    isPlainHostName(host) ||
+    isPrivateIp(host) ||
+    isLocalTestDomain(host) ||
+    host === "localhost"
+  ) {
+    return direct;
+  }
+
+  var randomIndex = Math.floor(Math.random() * proxyList.length);
+  var proxy = proxyList[randomIndex];
+  for (var i = 0; i < proxyList.length; i++) {
+    var p = proxyList[i];
+    if (isProxyAlive(p)) {
+      proxy = p;
+      break;
+    }
+  }
+
+  if (!ipRegExp.test(host)) {
+    if (testDomain(host, domainsUsingProxy)) {
+      return proxy;
     }
 
-    if (!ipRegExp.test(host)) {
-        if (testDomain(host, domainsUsingProxy)) {
-            return proxy;
-        }
-        
-        if (testDomain(host, directDomains, true)) {
-            return direct
-        }
-        strIp = dnsResolve(host);
-    } else {
-        strIp = host
+    if (testDomain(host, directDomains, true)) {
+      return direct;
     }
+    strIp = dnsResolve(host);
+  } else {
+    strIp = host;
+  }
 
-    if (!strIp) {
-        return proxy;
-    }
-    
-    intIp = convertAddress(strIp);
-
-    if (match(intIp)) {
-        return direct;
-    }
-
+  if (!strIp) {
     return proxy;
+  }
+
+  intIp = convertAddress(strIp);
+
+  if (match(intIp)) {
+    return direct;
+  }
+
+  return proxy;
 }
