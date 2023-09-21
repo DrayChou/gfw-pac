@@ -37,11 +37,11 @@
 ```
 SOCKS5 localhost:1080; PROXY localhost:1080;
 
-curl -o delegated-apnic-latest.txt http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest -x http://127.0.0.1:1080
-curl -o gfwlist.txt https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt -x http://127.0.0.1:1080
+curl -o delegated-apnic-latest.txt http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest -x http://127.0.0.1:7893
+curl -o gfwlist.txt https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt -x http://127.0.0.1:7893
 
 <!-- 使用本地配置 -->
-python3 gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT" -i gfwlist.txt --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt --ip-file=delegated-apnic-latest.txt
+python3 gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 192.168.1.9:1082; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT" -i gfwlist.txt --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt --ip-file=delegated-apnic-latest.txt
 
 <!-- 使用在线配置 -->
 python3 gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt
