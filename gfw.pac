@@ -1,4 +1,4 @@
-var proxy = "PROXY 10.0.0.1:3128";
+var proxy = "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 192.168.1.9:1082; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT";
 
 var direct = 'DIRECT';
 
@@ -76,9 +76,12 @@ var directDomains = {
 };
 
 var domainsUsingProxy = {
+  "": 1,
+  "battle.net": 1,
   "bing.cn": 1,
   "bing.com": 1,
   "bing.net": 1,
+  "blizzard.com": 1,
   "cloudflare.com": 1,
   "docker.com": 1,
   "facebook.com": 1,
@@ -98,6 +101,9 @@ var domainsUsingProxy = {
   "gstatic.com": 1,
   "jsdelivr.com": 1,
   "live.com": 1,
+  "microsoft.cn": 1,
+  "microsoft.com": 1,
+  "microsoftstore.com.cn": 1,
   "segment.io": 1,
   "stackoverflow.com": 1,
   "twitter.com": 1,
