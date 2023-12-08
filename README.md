@@ -42,8 +42,7 @@
                  --localtld-rule=local-tlds.txt \
                  --ip-file=delegated-apnic-latest.txt
 
-SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 s12:55155; SOCKS5 s10:55155; SOCKS5 s8:55155;
-SOCKS5%20localhost%3A7893%3B%20SOCKS5%20localhost%3A1080%3B%20SOCKS5%20s12%3A55155%3B%20SOCKS5%20s10%3A55155%3B%20SOCKS5%20s8%3A55155%3B.pac
+SOCKS5%20localhost%3A7893%3B%20SOCKS5%20localhost%3A1080%3B%20SOCKS5%20192.168.1.10%3A7893%3B%20SOCKS5%20192.168.1.9%3A7893%3B%20SOCKS5%20s12%3A55155%3B%20SOCKS5%20s10%3A55155%3B%20SOCKS5%20s8%3A55155%3B%20DIRECT.pac
 
 curl -o delegated-apnic-latest.txt http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest -x http://127.0.0.1:7893
 curl -o gfwlist.txt https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt -x http://127.0.0.1:7893
