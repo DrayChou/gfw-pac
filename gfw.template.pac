@@ -1,4 +1,4 @@
-var proxy = "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 s12:55155; SOCKS5 s10:55155; SOCKS5 s8:55155; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT";
+var proxy = "__PROXY__";
 
 var direct = 'DIRECT';
 

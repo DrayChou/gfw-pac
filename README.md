@@ -3,6 +3,7 @@
 科学上网 PAC 文件生成器。通过自定义域名和中国 IP 地址生成 PAC(Proxy auto-config) 文件。对存在于自定义域名和解析出的 IP 在国外的域名使用代理。
 
 ## 特性
+
 * 速度快，优先按域名匹配，再按解析后的 IP 匹配
 * 可自定义需要代理的域名
 * 可自定义本地开发 TLD 域名，例如 .test
@@ -47,10 +48,13 @@ curl -o delegated-apnic-latest.txt http://ftp.apnic.net/apnic/stats/apnic/delega
 curl -o gfwlist.txt https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt -x http://127.0.0.1:7893
 
 <!-- 使用本地配置 -->
-python3 gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 192.168.1.9:1082; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT" -i gfwlist.txt --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt --ip-file=delegated-apnic-latest.txt
+python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 s12:55155; SOCKS5 s10:55155; SOCKS5 s8:55155; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" -i gfwlist.txt --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt --ip-file=delegated-apnic-latest.txt
 
 <!-- 使用在线配置 -->
-python3 gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; SOCKS5 172.22.1.10:7893; SOCKS5 172.22.1.9:7893; DIRECT" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt
+python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 s12:55155; SOCKS5 s10:55155; SOCKS5 s8:55155; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt
+
+<!-- 生成模板-->
+python gfw-pac.py -f gfw.template.pac -p "__PROXY__" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt
 ```
 
 ## 技巧
