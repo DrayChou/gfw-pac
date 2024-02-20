@@ -46,9 +46,6 @@ nrt12s30-in-f4.1e100.net
 static-ecst.licdn.com
 cs1404.wpc.epsiloncdn.net
 
-claude.ai
-anthropic.com
-
 auth0.com
 client-api.arkoselabs.com
 events.statsigapi.net
@@ -61,3 +58,10 @@ pi.ai
 sentry.io
 stripe.com
 o33249.ingest.sentry.io
+
+gemini.google.com
+google.com
+
+www.anthropic.com
+claude.ai
+anthropic.com
