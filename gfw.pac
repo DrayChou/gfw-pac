@@ -1,4 +1,4 @@
-var proxy = "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083;  SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT";
+var proxy = "PROXY 127.0.0.1:3128";
 
 var direct = 'DIRECT';
 
@@ -76,30 +76,14 @@ var directDomains = {
 };
 
 var domainsUsingProxy = {
-  "": 1,
-  "ai.com": 1,
-  "anthropic.com": 1,
-  "api.openai.com": 1,
-  "auth0.com": 1,
-  "bard.google.com": 1,
-  "battle.net": 1,
   "bing.cn": 1,
   "bing.com": 1,
   "bing.net": 1,
-  "blizzard.com": 1,
-  "challenges.cloudflare.com": 1,
-  "chat.openai.com": 1,
-  "chat.openai.com.cdn.cloudflare.net": 1,
-  "claude.ai": 1,
-  "client-api.arkoselabs.com": 1,
   "cloudflare.com": 1,
-  "cs1404.wpc.epsiloncdn.net": 1,
   "docker.com": 1,
-  "events.statsigapi.net": 1,
   "facebook.com": 1,
   "facebook.net": 1,
   "fbcdn.net": 1,
-  "featuregates.org": 1,
   "ggpht.com": 1,
   "github.com": 1,
   "github.io": 1,
@@ -112,24 +96,10 @@ var domainsUsingProxy = {
   "googleusercontent.com": 1,
   "googlevideo.com": 1,
   "gstatic.com": 1,
-  "heypi.com": 1,
-  "identrust.com": 1,
-  "intercom.io": 1,
-  "intercomcdn.com": 1,
   "jsdelivr.com": 1,
   "live.com": 1,
-  "microsoft.cn": 1,
-  "microsoft.com": 1,
-  "microsoftstore.com.cn": 1,
-  "nrt12s30-in-f4.1e100.net": 1,
-  "o33249.ingest.sentry.io": 1,
-  "openai.com": 1,
-  "pi.ai": 1,
   "segment.io": 1,
-  "sentry.io": 1,
   "stackoverflow.com": 1,
-  "static-ecst.licdn.com": 1,
-  "stripe.com": 1,
   "twitter.com": 1,
   "unpkg.com": 1,
   "wikipedia.org": 1,
@@ -534,6 +504,11 @@ var cnips = [
     15
   ],
   [
+    607256576,
+    4294901760,
+    23
+  ],
+  [
     607322112,
     4294901760,
     16
@@ -617,6 +592,11 @@ var cnips = [
     679346176,
     4294901760,
     18
+  ],
+  [
+    681705472,
+    4294901760,
+    16
   ],
   [
     704643072,
@@ -6286,7 +6266,7 @@ var cnips = [
   [
     2070675456,
     4294901760,
-    20
+    23
   ],
   [
     2070937600,
@@ -7324,14 +7304,34 @@ var cnips = [
     16
   ],
   [
+    2634678272,
+    4294901760,
+    23
+  ],
+  [
+    2635005952,
+    4294901760,
+    23
+  ],
+  [
     2635202560,
     4294901760,
     16
   ],
   [
+    2635333632,
+    4294901760,
+    24
+  ],
+  [
     2638020608,
     4294901760,
     16
+  ],
+  [
+    2638348288,
+    4294901760,
+    23
   ],
   [
     2641821696,
@@ -7369,6 +7369,11 @@ var cnips = [
     16
   ],
   [
+    2659975168,
+    4294901760,
+    22
+  ],
+  [
     2669346816,
     4294901760,
     16
@@ -7395,11 +7400,6 @@ var cnips = [
   ],
   [
     2697592832,
-    4294901760,
-    22
-  ],
-  [
-    2699952128,
     4294901760,
     22
   ],
