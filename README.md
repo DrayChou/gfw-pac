@@ -51,17 +51,17 @@ curl -o delegated-apnic-latest.txt http://ftp.apnic.net/apnic/stats/apnic/delega
 curl -o gfwlist.txt https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt -x http://127.0.0.1:7893
 
 <!-- 使用本地配置 -->
-python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083;  SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" -i gfwlist.txt --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt --ip-file=delegated-apnic-latest.txt
+python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083;  SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt --ip-file=delegated-apnic-latest.txt
 
 <!-- 使用在线配置 -->
 python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083;  SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt
 
 <!-- 生成模板-->
-python gfw-pac.py -f gfw.template.pac -p "__PROXY__" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt
+python gfw-pac.py -f gfw.template.pac -p "__PROXY__" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt  --ip-file=delegated-apnic-latest.txt
 ```
 
 ## 技巧
 
-* 若自动下载 APNIC 的 IP 分配文件很慢，可自行用科学办法下载 <https://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest> 后，用 `--ip-file` 参数指定下载好的文件。
+* 若自动下载 APNIC 的 IP 分配文件很慢，可自行用科学办法下载 [https://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest](https://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest) 后，用 `--ip-file` 参数指定下载好的文件。
 * 自行解决 DNS 污染问题。
 * 代理工具最好也配置 GEOIP 规则。

@@ -1,4 +1,4 @@
-var proxy = "PROXY 127.0.0.1:3128";
+var proxy = "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083;  SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT";
 
 var direct = 'DIRECT';
 
@@ -76,14 +76,32 @@ var directDomains = {
 };
 
 var domainsUsingProxy = {
+  "": 1,
+  "adservice.google.com": 1,
+  "ai.com": 1,
+  "anthropic.com": 1,
+  "api.openai.com": 1,
+  "auth0.com": 1,
+  "bard.google.com": 1,
+  "battle.net": 1,
   "bing.cn": 1,
   "bing.com": 1,
   "bing.net": 1,
+  "blizzard.com": 1,
+  "challenges.cloudflare.com": 1,
+  "chat.openai.com": 1,
+  "chat.openai.com.cdn.cloudflare.net": 1,
+  "claude.ai": 1,
+  "client-api.arkoselabs.com": 1,
   "cloudflare.com": 1,
+  "cs1404.wpc.epsiloncdn.net": 1,
   "docker.com": 1,
+  "events.statsigapi.net": 1,
   "facebook.com": 1,
   "facebook.net": 1,
   "fbcdn.net": 1,
+  "featuregates.org": 1,
+  "gemini.google.com": 1,
   "ggpht.com": 1,
   "github.com": 1,
   "github.io": 1,
@@ -96,13 +114,28 @@ var domainsUsingProxy = {
   "googleusercontent.com": 1,
   "googlevideo.com": 1,
   "gstatic.com": 1,
+  "heypi.com": 1,
+  "identrust.com": 1,
+  "intercom.io": 1,
+  "intercomcdn.com": 1,
   "jsdelivr.com": 1,
   "live.com": 1,
+  "microsoft.cn": 1,
+  "microsoft.com": 1,
+  "microsoftstore.com.cn": 1,
+  "nrt12s30-in-f4.1e100.net": 1,
+  "o33249.ingest.sentry.io": 1,
+  "openai.com": 1,
+  "pi.ai": 1,
   "segment.io": 1,
+  "sentry.io": 1,
   "stackoverflow.com": 1,
+  "static-ecst.licdn.com": 1,
+  "stripe.com": 1,
   "twitter.com": 1,
   "unpkg.com": 1,
   "wikipedia.org": 1,
+  "www.anthropic.com": 1,
   "youtube.com": 1,
   "ytimg.com": 1
 };
@@ -10942,9 +10975,7 @@ var cnips = [
 
 var hasOwnProperty = Object.hasOwnProperty;
 
-var ipRegExp = new RegExp(
-  /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
-);
+var ipRegExp = new RegExp(/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/);
 
 function isIPv6(ip) {
     // Split the IP address into groups of hexadecimal digits
@@ -10981,39 +11012,34 @@ function isIPv6(ip) {
 }
 
 function convertAddress(ipchars) {
-  var bytes = ipchars.split(".");
-  var result =
-    ((bytes[0] & 0xff) << 24) |
-    ((bytes[1] & 0xff) << 16) |
-    ((bytes[2] & 0xff) << 8) |
-    (bytes[3] & 0xff);
-  return result;
+    var bytes = ipchars.split('.');
+    var result = ((bytes[0] & 0xff) << 24) |
+                 ((bytes[1] & 0xff) << 16) |
+                 ((bytes[2] & 0xff) <<  8) |
+                  (bytes[3] & 0xff);
+    return result;
 }
 
 function match(ip) {
-  var left = 0,
-    right = cnips.length;
-  do {
-    var mid = Math.floor((left + right) / 2),
-      ipf = (ip & cnips[mid][1]) >>> 0,
-      m = (cnips[mid][0] & cnips[mid][1]) >>> 0;
-    if (ipf == m) {
-      return true;
-    } else if (ipf > m) {
-      left = mid + 1;
-    } else {
-      right = mid;
-    }
-  } while (left + 1 <= right);
-  return false;
+    var left = 0, right = cnips.length;
+    do {
+        var mid = Math.floor((left + right) / 2),
+            ipf = (ip & cnips[mid][1]) >>> 0,
+            m   = (cnips[mid][0] & cnips[mid][1]) >>> 0;
+        if (ipf == m) {
+            return true;
+        } else if (ipf > m) {
+            left  = mid + 1;
+        } else {
+            right = mid;
+        }
+    } while (left + 1 <= right)
+    return false;
 }
 
 function isInDirectDomain(host) {
     if (hasOwnProperty.call(directDomains, host)) {
         return true;
-      } else {
-        return false;
-      }
     }
     for (var domain in directDomains) {
         if (host.endsWith('.' + domain)) {
@@ -11036,12 +11062,12 @@ function isInProxyDomain(host) {
 }
 
 function isLocalTestDomain(domain) {
-  // Chrome uses .test as testing gTLD.
-  var tld = domain.substring(domain.lastIndexOf("."));
-  if (tld === domain) {
-    return false;
-  }
-  return Object.hasOwnProperty.call(localTlds, tld);
+    // Chrome uses .test as testing gTLD.
+    var tld = domain.substring(domain.lastIndexOf('.'));
+    if (tld === domain) {
+        return false;
+    }
+    return Object.hasOwnProperty.call(localTlds, tld);
 }
 
 /* https://github.com/frenchbread/private-ip */
@@ -11094,20 +11120,7 @@ function FindProxyForURL(url, host) {
         alert(`${host} MATCHES CNIP`)
         return direct;
     }
-    strIp = dnsResolve(host);
-  } else {
-    strIp = host;
-  }
 
     alert(`${host} NO RULES WARE MATCHED, USING PROXY`)
     return proxy;
-  }
-
-  intIp = convertAddress(strIp);
-
-  if (match(intIp)) {
-    return direct;
-  }
-
-  return proxy;
 }

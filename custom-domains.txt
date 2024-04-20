@@ -1,21 +1,13 @@
-google.com
-google.com.hk
-googleapis.com
-bard.google.com
-gstatic.com
-ggpht.com
-googleusercontent.com
-youtube.com
-googlevideo.com
-ytimg.com
 github.com
 github.io
 githubusercontent.com
 githubassets.com
+
 bing.com
 bing.cn
 bing.net
 live.com
+
 stackoverflow.com
 wikipedia.org
 godaddy.com
@@ -59,8 +51,18 @@ sentry.io
 stripe.com
 o33249.ingest.sentry.io
 
-gemini.google.com
+gstatic.com
+ggpht.com
+googleusercontent.com
+youtube.com
+googlevideo.com
+ytimg.com
 google.com
+google.com.hk
+googleapis.com
+bard.google.com
+gemini.google.com
+adservice.google.com
 
 www.anthropic.com
 claude.ai
