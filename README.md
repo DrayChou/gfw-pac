@@ -5,6 +5,7 @@
 **此仓库每 14 天自动通过 GitHub Action 从 `Loyalsoldier/geoip` 获取国内地址段并更新 `gfw.pac` 文件**
 
 ## 特性
+
 * 开箱即用，直接可用的 `gfw.pac` 包含了常用的直连域名和代理域名以及国内IPv4/IPv6地址段
 * IP规则前置：若域名解析出的 IP 地址属于国内，返回直连，流量不经过代理程序
 * 速度快：优先按域名匹配，高频访问域名节省解析时间。IP段匹配使用Radix Tree，时间复杂度仅为O(m) _m<=32(IPv4) 或者 m<=128(IPv6)_
@@ -57,19 +58,33 @@
 
 维护 pac 文件并不是代理工具的优先工作。一些代理工具提供的 pac 文件在不断融合的过程中包含了广告过滤、隐私保护等太多内容，以及体积庞大到无人可维护的域名列表，年久失修导致非常容易漏掉或者误伤。另一个极端则是仅有非常少的规则，大多数流量还是进入了客户端，甚至都不支持IPv6。而这个 pac 文件仅添加访问频率最高的域名，可以明确知道哪些域名直连、哪些域名代理，域名列表没有的再通过 IP 地址段匹配确认，可以保证99%以上的国内流量不进入代理程序。
 
+```
+
+### 调用示例
+
+#### 使用本地配置
+
+```
+python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" --proxy-domains=proxy-domains.txt --direct-domains=direct-domains.txt --localtld-domains=local-tlds.txt --ip-file=cidrs-cn.txt
+```
+
+#### 使用在线配置
+
+```
+python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083; SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" --proxy-domains=proxy-domains.txt --direct-domains=direct-domains.txt --localtld-domains=local-tlds.txt
+```
+
+#### 生成模板
+
+```
+python gfw-pac.py -f gfw.template.pac -p "__PROXY__" --proxy-domains=proxy-domains.txt --direct-domains=direct-domains.txt --localtld-domains=local-tlds.txt --ip-file=cidrs-cn.txt
+```
+
+```
 SOCKS5%20localhost%3A7893%3B%20SOCKS5%20localhost%3A1080%3B%20SOCKS5%20192.168.1.10%3A7893%3B%20SOCKS5%20192.168.1.9%3A7893%3B%20SOCKS5%20s12%3A55155%3B%20SOCKS5%20s10%3A55155%3B%20SOCKS5%20s8%3A55155%3B%20DIRECT.pac
 
-curl -o delegated-apnic-latest.txt http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest -x http://127.0.0.1:7893
+curl -o cidrs-cn.txt http://ftp.apnic.net/apnic/stats/apnic/delegated-apnic-latest -x http://127.0.0.1:7893
 curl -o gfwlist.txt https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt -x http://127.0.0.1:7893
-
-<!-- 使用本地配置 -->
-python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083;  SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt --ip-file=delegated-apnic-latest.txt
-
-<!-- 使用在线配置 -->
-python gfw-pac.py -f gfw.pac -p "SOCKS5 localhost:7893; SOCKS5 localhost:1080; SOCKS5 localhost:1081; SOCKS5 localhost:1082; SOCKS5 localhost:1083;  SOCKS5 192.168.1.10:7893; SOCKS5 192.168.1.9:7893; DIRECT" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt
-
-<!-- 生成模板-->
-python gfw-pac.py -f gfw.template.pac -p "__PROXY__" --user-rule=custom-domains.txt --direct-rule=direct-domains.txt --localtld-rule=local-tlds.txt  --ip-file=delegated-apnic-latest.txt
 ```
 
 ## 技巧
