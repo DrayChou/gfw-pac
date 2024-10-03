@@ -13,6 +13,7 @@ wikipedia.org
 godaddy.com
 cloudflare.com
 twitter.com
+twimg.com
 docker.com
 facebook.com
 facebook.net
@@ -20,6 +21,17 @@ fbcdn.net
 segment.io
 unpkg.com
 jsdelivr.com
+google.com
+google.com.hk
+googleapis.com
+gstatic.com
+ggpht.com
+googleusercontent.com
+youtube.com
+googlevideo.com
+ytimg.com
+
+tv.apple.com
 
 microsoft.com
 live.com
@@ -67,3 +79,4 @@ adservice.google.com
 www.anthropic.com
 claude.ai
 anthropic.com
+tv.apple.com
