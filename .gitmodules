@@ -1,0 +1,3 @@
+[submodule "vendor/gfw-pac"]
+	path = vendor/gfw-pac
+	url = https://github.com/zhiyi7/gfw-pac.git
