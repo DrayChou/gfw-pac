@@ -22,8 +22,8 @@ def parse_args():
                         help='直连的域名文件，每行一个')
     parser.add_argument('--localtld-domains', dest='localtld_rule',
                         help='本地 TLD 规则文件, 不走代理, 每行一个，以 . 开头')
-    parser.add_argument('--ip-file', dest='ip_file',
-                        help='中国IP地址段文件')
+    parser.add_argument('--ip-file', dest='ip_file', default='vendor/gfw-pac/cidrs-cn.txt',
+                        help='中国IP地址段文件, 默认: vendor/gfw-pac/cidrs-cn.txt')
     return parser.parse_args()
 
 def convert_cidr(cidr):

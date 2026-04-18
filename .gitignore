@@ -46,3 +46,5 @@ $RECYCLE.BIN/
 
 __pycache__
 pac
+gfw.pac
+cidrs-cn.txt
