@@ -165,96 +165,95 @@ except ImportError:
 if HAS_FASTAPI:
     app = FastAPI()
 
+    # 从 https://pac.duyao.de/https/us.erl.re/443/ 这样得请求里解析出来 代理协议、代理IP、代理端口
+    # api 启动命令：python -m uvicorn gfw-pac:app --reload --host 0.0.0.0 --port 8089
+    @app.get("/{proxy_protocol}/{proxy_ip}/{proxy_port}")
+    def proxy(proxy_protocol: str, proxy_ip: str, proxy_port: str):
+        """
+        :param proxy_protocol: 代理协议
+        :param proxy_ip: 代理IP
+        :param proxy_port: 代理端口
 
-# 从 https://pac.duyao.de/https/us.erl.re/443/ 这样得请求里解析出来 代理协议、代理IP、代理端口
-# api 启动命令：python -m uvicorn gfw-pac:app --reload --host 0.0.0.0 --port 8089
-@app.get("/{proxy_protocol}/{proxy_ip}/{proxy_port}")
-def proxy(proxy_protocol: str, proxy_ip: str, proxy_port: str):
-    """
-    :param proxy_protocol: 代理协议
-    :param proxy_ip: 代理IP
-    :param proxy_port: 代理端口
+        :return: 修改好代理协议IP端口得 pac 内容
+        """
 
-    :return: 修改好代理协议IP端口得 pac 内容
-    """
+        global gfwlist_url
 
-    global gfwlist_url
+        args = {
+            "output": f"pac/{proxy_protocol}_{proxy_ip}_{proxy_port}.pac",
+            "proxy": f"{proxy_protocol} {proxy_ip}:{proxy_port}; ",
+            "user_rule": "custom-domains.txt",
+            "direct_rule": "direct-domains.txt",
+            "localtld_rule": "local-tlds.txt",
+        }
 
-    args = {
-        "output": f"pac/{proxy_protocol}_{proxy_ip}_{proxy_port}.pac",
-        "proxy": f"{proxy_protocol} {proxy_ip}:{proxy_port}; ",
-        "user_rule": "custom-domains.txt",
-        "direct_rule": "direct-domains.txt",
-        "localtld_rule": "local-tlds.txt",
-    }
+        # 设置 args
+        import sys
 
-    # 设置 args
-    import sys
+        sys.argv = [
+            "gfw-pac.py",
+            "-f",
+            args["output"],
+            "-p",
+            args["proxy"],
+            "--user-rule",
+            args["user_rule"],
+            "--direct-rule",
+            args["direct_rule"],
+            "--localtld-rule",
+            args["localtld_rule"],
+        ]
 
-    sys.argv = [
-        "gfw-pac.py",
-        "-f",
-        args["output"],
-        "-p",
-        args["proxy"],
-        "--user-rule",
-        args["user_rule"],
-        "--direct-rule",
-        args["direct_rule"],
-        "--localtld-rule",
-        args["localtld_rule"],
-    ]
+        args = parse_args()
+        print("args = ", args)
 
-    args = parse_args()
-    print("args = ", args)
+        # 如果本地有这个代理地址的配置文件，那么就用本地的
+        # 先检查 pac 目录是否存在
+        import os, time
 
-    # 如果本地有这个代理地址的配置文件，那么就用本地的
-    # 先检查 pac 目录是否存在
-    import os, time
+        if not os.path.exists("pac"):
+            os.mkdir("pac")
+        # 检查 pac 文件是否存在，如果存在，而且修改时间小于1分钟，那么就直接返回
+        if os.path.exists(args.output) and (
+            os.path.getmtime(args.output) + 60 > time.time()
+        ):
+            # 存在就直接返回
+            with open(args.output, "r", encoding="utf-8") as f:
+                return f.read()
 
-    if not os.path.exists("pac"):
-        os.mkdir("pac")
-    # 检查 pac 文件是否存在，如果存在，而且修改时间小于1分钟，那么就直接返回
-    if os.path.exists(args.output) and (
-        os.path.getmtime(args.output) + 60 > time.time()
-    ):
-        # 存在就直接返回
-        with open(args.output, "r", encoding="utf-8") as f:
-            return f.read()
+        print("Downloading gfwlist from %s" % gfwlist_url)
+        content = urllib.request.urlopen(gfwlist_url, timeout=10).read().decode("utf-8")
 
-    print("Downloading gfwlist from %s" % gfwlist_url)
-    content = urllib.request.urlopen(gfwlist_url, timeout=10).read().decode("utf-8")
+        # 如果 args["user_rule"] 是本地文件，那么直接读取，否则下载
+        with open(args.user_rule, "r", encoding="utf-8") as f:
+            user_rule = f.read()
 
-    # 如果 args["user_rule"] 是本地文件，那么直接读取，否则下载
-    with open(args.user_rule, "r", encoding="utf-8") as f:
-        user_rule = f.read()
+        # 如果 args["direct_rule"] 是本地文件，那么直接读取，否则下载
+        with open(args.direct_rule, "r", encoding="utf-8") as f:
+            direct_rule = f.read()
+        direct_rule = direct_rule.splitlines(False)
 
-    # 如果 args["direct_rule"] 是本地文件，那么直接读取，否则下载
-    with open(args.direct_rule, "r", encoding="utf-8") as f:
-        direct_rule = f.read()
-    direct_rule = direct_rule.splitlines(False)
+        # 如果 args["localtld_rule"] 是本地文件，那么直接读取，否则下载
+        with open(args.localtld_rule, "r", encoding="utf-8") as f:
+            localtld_rule = f.read()
+        localtld_rule = localtld_rule.splitlines(False)
 
-    # 如果 args["localtld_rule"] 是本地文件，那么直接读取，否则下载
-    with open(args.localtld_rule, "r", encoding="utf-8") as f:
-        localtld_rule = f.read()
-    localtld_rule = localtld_rule.splitlines(False)
+        cnips = fetch_ip_data()
 
-    cnips = fetch_ip_data()
+        content = decode_gfwlist(content)
+        gfwlist = combine_lists(content, user_rule)
 
-    content = decode_gfwlist(content)
-    gfwlist = combine_lists(content, user_rule)
+        domains = parse_gfwlist(gfwlist)
+        # domains = reduce_domains(domains)
+        pac_content = generate_pac_fast(
+            domains, args.proxy, direct_rule, cnips, localtld_rule
+        )
 
-    domains = parse_gfwlist(gfwlist)
-    # domains = reduce_domains(domains)
-    pac_content = generate_pac_fast(
-        domains, args.proxy, direct_rule, cnips, localtld_rule
-    )
+        print("pac_content = ", type(pac_content))
 
-    print("pac_content = ", type(pac_content))
+        # 存到本地，下次就不用再生成了
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write(pac_content)
 
-    # 存到本地，下次就不用再生成了
-    with open(args.output, "w", encoding="utf-8") as f:
-        f.write(pac_content)
-
-    # 直接返回 raw pac 内容
-    return Response(content=pac_content.strip('"'), media_type="application/x-ns-proxy-autoconfig")
+        # 直接返回 raw pac 内容
+        return Response(content=pac_content.strip('"'), media_type="application/x-ns-proxy-autoconfig")
