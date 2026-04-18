@@ -156,9 +156,14 @@ if __name__ == "__main__":
 # 添加接口
 # pip install fastapi uvicorn
 # python -m uvicorn gfw-pac:app --reload --host 0.0.0.0 --port 8089
-from fastapi import FastAPI, Response
+try:
+    from fastapi import FastAPI, Response
+    HAS_FASTAPI = True
+except ImportError:
+    HAS_FASTAPI = False
 
-app = FastAPI()
+if HAS_FASTAPI:
+    app = FastAPI()
 
 
 # 从 https://pac.duyao.de/https/us.erl.re/443/ 这样得请求里解析出来 代理协议、代理IP、代理端口
