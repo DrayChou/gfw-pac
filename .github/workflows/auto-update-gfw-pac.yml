@@ -42,7 +42,5 @@ jobs:
           git commit -m "chore: update gfw.pac and gfw.template.pac from submodule"
 
       - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.PUSH_TOKEN }}
-          branch: submodule
+        run: |
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git submodule
