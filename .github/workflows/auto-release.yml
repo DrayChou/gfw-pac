@@ -25,7 +25,8 @@ jobs:
         id: commit_count
         run: |
           today=$(TZ=Asia/Shanghai date +%Y%m%d)
-          commit_count=$(TZ=Asia/Shanghai git log --date=local --since="$today 00:00:00" --until="$today 23:59:59" --pretty=format: --name-only | grep -c '^gfw.template.pac$' || echo 0)
+          match_count=$(TZ=Asia/Shanghai git log --date=local --since="$today 00:00:00" --until="$today 23:59:59" --pretty=format: --name-only | grep -c '^gfw.template.pac$')
+          commit_count=${match_count:-0}
           echo "COMMIT_COUNT=$commit_count" >> $GITHUB_ENV
           echo "RELEASE_NAME=v$(TZ='Asia/Shanghai' date +%Y%m%d).$commit_count" >> $GITHUB_ENV
 
